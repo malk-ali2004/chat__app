@@ -16,7 +16,6 @@ class AuthCubit extends Cubit<AuthState> {
     'users',
   );
 
-  // 🔹 Email & Password Login
   Future<void> login({required String email, required String password}) async {
     try {
       emit(LoginLoading());
@@ -32,7 +31,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // 🔹 Register New User
   Future<void> register({
     required String email,
     required String password,
@@ -42,16 +40,13 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(RegisterLoading());
 
-      // إنشاء مستخدم جديد في Firebase
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // إرسال إيميل التحقق
       await FirebaseAuth.instance.currentUser!.sendEmailVerification();
 
-      // حفظ بيانات المستخدم في Firestore
       final userModel = UserModel(
         email: email,
         password: password,
@@ -86,7 +81,6 @@ class AuthCubit extends Cubit<AuthState> {
         credential,
       );
 
-      // حفظ بيانات المستخدم في Firestore لو أول مرة
       await _saveSocialUser(userCred.user);
 
       emit(LoginSuccess());
@@ -95,7 +89,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // 🔹 حفظ بيانات المستخدم بعد تسجيل الدخول بالسوشيال
   Future<void> _saveSocialUser(User? user) async {
     if (user == null) return;
     final userDoc = await users.doc(user.email).get();
